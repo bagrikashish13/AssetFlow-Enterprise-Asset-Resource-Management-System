@@ -1,14 +1,434 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Get a free hosted Postgres database in seconds: `npx create-db`
+// =============================================================================
+// AssetFlow — Prisma Schema
+// Source of truth: docs/03-DATABASE-DESIGN.md
+// PostgreSQL 16 · UUID PKs · snake_case SQL ↔ camelCase TS via @map
+// =============================================================================
 
 generator client {
-  provider = "prisma-client"
+  provider     = "prisma-client"
   output       = "../generated/prisma"
   moduleFormat = "cjs"
 }
 
 datasource db {
   provider = "postgresql"
+}
+
+// =============================================================================
+// Enumerations (§3)
+// =============================================================================
+
+enum UserRole {
+  ADMIN
+  ASSET_MANAGER
+  DEPT_HEAD
+  EMPLOYEE
+
+  @@map("user_role")
+}
+
+enum RecordStatus {
+  ACTIVE
+  INACTIVE
+
+  @@map("record_status")
+}
+
+enum AssetStatus {
+  AVAILABLE
+  ALLOCATED
+  RESERVED
+  UNDER_MAINTENANCE
+  LOST
+  RETIRED
+  DISPOSED
+
+  @@map("asset_status")
+}
+
+enum AssetCondition {
+  NEW
+  GOOD
+  FAIR
+  POOR
+
+  @@map("asset_condition")
+}
+
+enum AllocationStatus {
+  ACTIVE
+  RETURNED
+
+  @@map("allocation_status")
+}
+
+enum TransferStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+
+  @@map("transfer_status")
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+
+  @@map("booking_status")
+}
+
+enum MaintenanceStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  ASSIGNED
+  IN_PROGRESS
+  RESOLVED
+
+  @@map("maintenance_status")
+}
+
+enum MaintenancePriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+
+  @@map("maintenance_priority")
+}
+
+enum AuditCycleStatus {
+  OPEN
+  CLOSED
+
+  @@map("audit_cycle_status")
+}
+
+enum AuditResult {
+  VERIFIED
+  MISSING
+  DAMAGED
+
+  @@map("audit_result")
+}
+
+// =============================================================================
+// Models (§4)
+// =============================================================================
+
+/// §4.1 — Users
+model User {
+  id           String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String
+  email        String       @unique
+  passwordHash String       @map("password_hash")
+  role         UserRole     @default(EMPLOYEE)
+  departmentId String?      @map("department_id") @db.Uuid
+  status       RecordStatus @default(ACTIVE)
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt    DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  department          Department?          @relation("DepartmentMembers", fields: [departmentId], references: [id], onDelete: Restrict)
+  headOfDepartments   Department[]         @relation("DepartmentHead")
+  createdAssets       Asset[]              @relation("AssetCreator")
+  heldAllocations     Allocation[]         @relation("AllocationHolder")
+  madeAllocations     Allocation[]         @relation("AllocationAllocator")
+  transferRequests    TransferRequest[]    @relation("TransferRequester")
+  transferTargets     TransferRequest[]    @relation("TransferTargetUser")
+  transferDecisions   TransferRequest[]    @relation("TransferDecider")
+  bookings            Booking[]            @relation("BookingUser")
+  raisedMaintenance   MaintenanceRequest[] @relation("MaintenanceRaiser")
+  decidedMaintenance  MaintenanceRequest[] @relation("MaintenanceDecider")
+  createdAuditCycles  AuditCycle[]         @relation("AuditCycleCreator")
+  auditAssignments    AuditAssignment[]
+  auditRecords        AuditRecord[]
+  notifications       Notification[]
+  activityLogs        ActivityLog[]
+
+  @@index([departmentId])
+  @@index([role])
+  @@map("users")
+}
+
+/// §4.2 — Departments
+model Department {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String       @unique
+  description String?
+  headId      String?      @map("head_id") @db.Uuid
+  parentId    String?      @map("parent_id") @db.Uuid
+  status      RecordStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  head                Department?    @relation("DepartmentParent", fields: [parentId], references: [id], onDelete: Restrict)
+  children            Department[]   @relation("DepartmentParent")
+  departmentHead      User?          @relation("DepartmentHead", fields: [headId], references: [id], onDelete: SetNull)
+  members             User[]         @relation("DepartmentMembers")
+  assets              Asset[]
+  heldAllocations     Allocation[]   @relation("AllocationDepartmentHolder")
+  transferTargets     TransferRequest[] @relation("TransferTargetDepartment")
+  bookingDepartments  Booking[]      @relation("BookingDepartment")
+  auditCycles         AuditCycle[]
+
+  @@map("departments")
+}
+
+/// §4.3 — Asset Categories
+model AssetCategory {
+  id          String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String       @unique
+  description String?
+  icon        String
+  fields      Json         @default("[]") @db.JsonB
+  status      RecordStatus @default(ACTIVE)
+  createdAt   DateTime     @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime     @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  assets Asset[]
+
+  @@map("asset_categories")
+}
+
+/// §4.4 — Assets
+model Asset {
+  id                String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  assetTag          String         @unique @map("asset_tag")
+  name              String
+  categoryId        String         @map("category_id") @db.Uuid
+  serialNumber      String?        @unique @map("serial_number")
+  acquisitionDate   DateTime?      @map("acquisition_date") @db.Date
+  acquisitionCost   Decimal?       @map("acquisition_cost") @db.Decimal(12, 2)
+  condition         AssetCondition @default(GOOD)
+  location          String?
+  photoUrl          String?        @map("photo_url")
+  customFieldValues Json?          @map("custom_field_values") @db.JsonB
+  isBookable        Boolean        @default(false) @map("is_bookable")
+  status            AssetStatus    @default(AVAILABLE)
+  departmentId      String?        @map("department_id") @db.Uuid
+  createdById       String         @map("created_by_id") @db.Uuid
+  createdAt         DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt         DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  category            AssetCategory        @relation(fields: [categoryId], references: [id], onDelete: Restrict)
+  department          Department?          @relation(fields: [departmentId], references: [id], onDelete: Restrict)
+  createdBy           User                 @relation("AssetCreator", fields: [createdById], references: [id])
+  allocations         Allocation[]
+  transferRequests    TransferRequest[]
+  bookings            Booking[]
+  maintenanceRequests MaintenanceRequest[]
+  auditRecords        AuditRecord[]
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([departmentId])
+  @@index([location])
+  @@map("assets")
+}
+
+/// §4.5 — Allocations (who holds what)
+model Allocation {
+  id                  String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  assetId             String           @map("asset_id") @db.Uuid
+  holderUserId        String?          @map("holder_user_id") @db.Uuid
+  holderDepartmentId  String?          @map("holder_department_id") @db.Uuid
+  allocatedById       String           @map("allocated_by_id") @db.Uuid
+  allocatedAt         DateTime         @default(now()) @map("allocated_at") @db.Timestamptz
+  expectedReturnAt    DateTime?        @map("expected_return_at") @db.Timestamptz
+  returnedAt          DateTime?        @map("returned_at") @db.Timestamptz
+  returnCondition     AssetCondition?  @map("return_condition")
+  returnNotes         String?          @map("return_notes")
+  status              AllocationStatus @default(ACTIVE)
+  notes               String?
+
+  // Relations
+  asset              Asset              @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  holderUser         User?              @relation("AllocationHolder", fields: [holderUserId], references: [id], onDelete: Restrict)
+  holderDepartment   Department?        @relation("AllocationDepartmentHolder", fields: [holderDepartmentId], references: [id], onDelete: Restrict)
+  allocatedBy        User               @relation("AllocationAllocator", fields: [allocatedById], references: [id])
+  transferRequests   TransferRequest[]
+
+  @@index([holderUserId])
+  @@index([holderDepartmentId])
+  @@map("allocations")
+}
+
+/// §4.6 — Transfer Requests
+model TransferRequest {
+  id                 String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  assetId            String         @map("asset_id") @db.Uuid
+  fromAllocationId   String         @map("from_allocation_id") @db.Uuid
+  requestedById      String         @map("requested_by_id") @db.Uuid
+  targetUserId       String?        @map("target_user_id") @db.Uuid
+  targetDepartmentId String?        @map("target_department_id") @db.Uuid
+  reason             String
+  status             TransferStatus @default(PENDING)
+  decidedById        String?        @map("decided_by_id") @db.Uuid
+  decidedAt          DateTime?      @map("decided_at") @db.Timestamptz
+  decisionNote       String?        @map("decision_note")
+  createdAt          DateTime       @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  asset            Asset       @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  fromAllocation   Allocation  @relation(fields: [fromAllocationId], references: [id], onDelete: Restrict)
+  requestedBy      User        @relation("TransferRequester", fields: [requestedById], references: [id])
+  targetUser       User?       @relation("TransferTargetUser", fields: [targetUserId], references: [id])
+  targetDepartment Department? @relation("TransferTargetDepartment", fields: [targetDepartmentId], references: [id])
+  decidedBy        User?       @relation("TransferDecider", fields: [decidedById], references: [id])
+
+  @@map("transfer_requests")
+}
+
+/// §4.7 — Bookings (time-slot reservations)
+model Booking {
+  id              String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  assetId         String        @map("asset_id") @db.Uuid
+  bookedById      String        @map("booked_by_id") @db.Uuid
+  forDepartmentId String?       @map("for_department_id") @db.Uuid
+  purpose         String
+  startAt         DateTime      @map("start_at") @db.Timestamptz
+  endAt           DateTime      @map("end_at") @db.Timestamptz
+  status          BookingStatus @default(CONFIRMED)
+  cancelledAt     DateTime?     @map("cancelled_at") @db.Timestamptz
+  reminderSentAt  DateTime?     @map("reminder_sent_at") @db.Timestamptz
+  createdAt       DateTime      @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  asset         Asset       @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  bookedBy      User        @relation("BookingUser", fields: [bookedById], references: [id])
+  forDepartment Department? @relation("BookingDepartment", fields: [forDepartmentId], references: [id])
+
+  @@index([assetId, startAt])
+  @@index([bookedById])
+  @@map("bookings")
+}
+
+/// §4.8 — Maintenance Requests
+model MaintenanceRequest {
+  id              String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  assetId         String              @map("asset_id") @db.Uuid
+  raisedById      String              @map("raised_by_id") @db.Uuid
+  title           String
+  description     String?
+  priority        MaintenancePriority @default(MEDIUM)
+  photoUrl        String?             @map("photo_url")
+  status          MaintenanceStatus   @default(PENDING)
+  decidedById     String?             @map("decided_by_id") @db.Uuid
+  decidedAt       DateTime?           @map("decided_at") @db.Timestamptz
+  rejectionReason String?             @map("rejection_reason")
+  technicianName  String?             @map("technician_name")
+  assignedAt      DateTime?           @map("assigned_at") @db.Timestamptz
+  startedAt       DateTime?           @map("started_at") @db.Timestamptz
+  resolvedAt      DateTime?           @map("resolved_at") @db.Timestamptz
+  resolutionNotes String?             @map("resolution_notes")
+  cost            Decimal?            @db.Decimal(12, 2)
+  createdAt       DateTime            @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime            @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  asset     Asset @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  raisedBy  User  @relation("MaintenanceRaiser", fields: [raisedById], references: [id])
+  decidedBy User? @relation("MaintenanceDecider", fields: [decidedById], references: [id])
+
+  @@index([assetId, createdAt(sort: Desc)])
+  @@index([status])
+  @@map("maintenance_requests")
+}
+
+/// §4.9 — Audit Cycles
+model AuditCycle {
+  id           String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name         String
+  departmentId String?          @map("department_id") @db.Uuid
+  location     String?
+  startDate    DateTime         @map("start_date") @db.Date
+  endDate      DateTime         @map("end_date") @db.Date
+  status       AuditCycleStatus @default(OPEN)
+  createdById  String           @map("created_by_id") @db.Uuid
+  closedAt     DateTime?        @map("closed_at") @db.Timestamptz
+  createdAt    DateTime         @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  department  Department?       @relation(fields: [departmentId], references: [id])
+  createdBy   User              @relation("AuditCycleCreator", fields: [createdById], references: [id])
+  assignments AuditAssignment[]
+  records     AuditRecord[]
+
+  @@map("audit_cycles")
+}
+
+/// §4.9 — Audit Assignments (composite PK)
+model AuditAssignment {
+  cycleId   String @map("cycle_id") @db.Uuid
+  auditorId String @map("auditor_id") @db.Uuid
+
+  // Relations
+  cycle   AuditCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  auditor User       @relation(fields: [auditorId], references: [id])
+
+  @@id([cycleId, auditorId])
+  @@map("audit_assignments")
+}
+
+/// §4.9 — Audit Records
+model AuditRecord {
+  id        String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  cycleId   String       @map("cycle_id") @db.Uuid
+  assetId   String       @map("asset_id") @db.Uuid
+  auditorId String?      @map("auditor_id") @db.Uuid
+  result    AuditResult?
+  notes     String?
+  checkedAt DateTime?    @map("checked_at") @db.Timestamptz
+
+  // Relations
+  cycle   AuditCycle @relation(fields: [cycleId], references: [id], onDelete: Cascade)
+  asset   Asset      @relation(fields: [assetId], references: [id], onDelete: Restrict)
+  auditor User?      @relation(fields: [auditorId], references: [id])
+
+  @@unique([cycleId, assetId])
+  @@map("audit_records")
+}
+
+/// §4.10 — Notifications
+model Notification {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  type       String
+  title      String
+  body       String
+  entityType String?  @map("entity_type")
+  entityId   String?  @map("entity_id")
+  isRead     Boolean  @default(false) @map("is_read")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, isRead, createdAt(sort: Desc)])
+  @@map("notifications")
+}
+
+/// §4.11 — Activity Logs (append-only audit trail)
+model ActivityLog {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  actorId    String?  @map("actor_id") @db.Uuid
+  action     String
+  entityType String   @map("entity_type")
+  entityId   String   @map("entity_id")
+  summary    String
+  metadata   Json?    @db.JsonB
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  // Relations
+  actor User? @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@index([entityType, entityId])
+  @@index([actorId])
+  @@index([createdAt(sort: Desc)])
+  @@map("activity_logs")
 }
