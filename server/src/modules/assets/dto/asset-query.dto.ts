@@ -1,4 +1,10 @@
-import { IsOptional, IsString, IsEnum, IsUUID } from 'class-validator';
+import {
+  IsOptional,
+  IsString,
+  IsEnum,
+  IsUUID,
+  IsBooleanString,
+} from 'class-validator';
 import { PaginationQueryDto } from '../../../common/dto/pagination-query.dto';
 import { AssetStatus, AssetCondition } from '@prisma/client';
 
@@ -22,4 +28,8 @@ export class AssetQueryDto extends PaginationQueryDto {
   @IsOptional()
   @IsString()
   location?: string;
+
+  @IsOptional()
+  @IsBooleanString()
+  isBookable?: string;
 }

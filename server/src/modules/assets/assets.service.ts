@@ -79,6 +79,8 @@ export class AssetsService {
       departmentId,
       status,
       condition,
+      location,
+      isBookable,
     } = query;
     const skip = (page - 1) * limit;
 
@@ -94,6 +96,10 @@ export class AssetsService {
       ...(departmentId && { departmentId }),
       ...(status && { status }),
       ...(condition && { condition }),
+      ...(location && {
+        location: { contains: location, mode: 'insensitive' },
+      }),
+      ...(isBookable !== undefined && { isBookable: isBookable === 'true' }),
     };
 
     const [total, assets] = await Promise.all([
