@@ -12,6 +12,7 @@ import { CategoriesModule } from './modules/categories/categories.module';
 import { AssetsModule } from './modules/assets/assets.module';
 import { AllocationsModule } from './modules/allocations/allocations.module';
 import { PrismaModule } from './prisma/prisma.module';
+import { TransfersModule } from './modules/transfers/transfers.module';
 
 @Module({
   imports: [
@@ -35,6 +36,7 @@ import { PrismaModule } from './prisma/prisma.module';
     CategoriesModule,
     AssetsModule,
     AllocationsModule,
+    TransfersModule,
   ],
   providers: [
     {
