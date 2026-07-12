@@ -25,6 +25,7 @@ import { AuditsModule } from './modules/audits/audits.module';
 import { ActivityModule } from './modules/activity/activity.module';
 import { SchedulerModule } from './modules/scheduler/scheduler.module';
 import { DashboardModule } from './modules/dashboard/dashboard.module';
+import { ReportsModule } from './modules/reports/reports.module';
 
 @Module({
   imports: [
@@ -57,6 +58,7 @@ import { DashboardModule } from './modules/dashboard/dashboard.module';
     ActivityModule,
     SchedulerModule,
     DashboardModule,
+    ReportsModule,
   ],
   providers: [
     // Order matters: rate limit -> authenticate -> authorize.
