@@ -1,0 +1,502 @@
+{
+  "assets": [
+    {
+      "assetTag": "AF-0001",
+      "name": "MacBook Pro 14\" M3",
+      "category": "Electronics",
+      "serialNumber": "MBP14M3001",
+      "acquisitionDate": "2024-03-15",
+      "acquisitionCost": 180000,
+      "condition": "NEW",
+      "location": "HQ Floor 1",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "IT",
+      "customFieldValues": {
+        "warranty_months": 36,
+        "ram_gb": 16
+      }
+    },
+    {
+      "assetTag": "AF-0002",
+      "name": "MacBook Pro 14\" M3",
+      "category": "Electronics",
+      "serialNumber": "MBP14M3002",
+      "acquisitionDate": "2024-03-15",
+      "acquisitionCost": 180000,
+      "condition": "NEW",
+      "location": "HQ Floor 2",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Operations",
+      "customFieldValues": {
+        "warranty_months": 36,
+        "ram_gb": 16
+      }
+    },
+    {
+      "assetTag": "AF-0003",
+      "name": "ThinkPad X1 Carbon Gen 11",
+      "category": "Electronics",
+      "serialNumber": "TPX1C11001",
+      "acquisitionDate": "2023-11-10",
+      "acquisitionCost": 160000,
+      "condition": "GOOD",
+      "location": "Remote",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Finance",
+      "customFieldValues": {
+        "warranty_months": 24,
+        "ram_gb": 32
+      }
+    },
+    {
+      "assetTag": "AF-0004",
+      "name": "ThinkPad X1 Carbon Gen 11",
+      "category": "Electronics",
+      "serialNumber": "TPX1C11002",
+      "acquisitionDate": "2023-11-10",
+      "acquisitionCost": 160000,
+      "condition": "GOOD",
+      "location": "Remote",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "HR",
+      "customFieldValues": {
+        "warranty_months": 24,
+        "ram_gb": 16
+      }
+    },
+    {
+      "assetTag": "AF-0005",
+      "name": "Dell UltraSharp 27\" Monitor",
+      "category": "Electronics",
+      "serialNumber": "DELLU27001",
+      "acquisitionDate": "2022-05-20",
+      "acquisitionCost": 35000,
+      "condition": "GOOD",
+      "location": "HQ Floor 1",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "IT",
+      "customFieldValues": {
+        "warranty_months": 36
+      }
+    },
+    {
+      "assetTag": "AF-0006",
+      "name": "Dell UltraSharp 27\" Monitor",
+      "category": "Electronics",
+      "serialNumber": "DELLU27002",
+      "acquisitionDate": "2022-05-20",
+      "acquisitionCost": 35000,
+      "condition": "GOOD",
+      "location": "HQ Floor 2",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Operations",
+      "customFieldValues": {
+        "warranty_months": 36
+      }
+    },
+    {
+      "assetTag": "AF-0007",
+      "name": "iPad Pro 11\" (M2)",
+      "category": "Electronics",
+      "serialNumber": "IPADPRO1101",
+      "acquisitionDate": "2023-01-12",
+      "acquisitionCost": 85000,
+      "condition": "GOOD",
+      "location": "HQ Floor 3",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "IT",
+      "customFieldValues": {
+        "warranty_months": 12,
+        "ram_gb": 8
+      }
+    },
+    {
+      "assetTag": "AF-0008",
+      "name": "iPhone 15 Pro",
+      "category": "Electronics",
+      "serialNumber": "IPHONE15P01",
+      "acquisitionDate": "2024-02-05",
+      "acquisitionCost": 130000,
+      "condition": "NEW",
+      "location": "HQ Floor 1",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "IT",
+      "customFieldValues": {
+        "warranty_months": 12
+      }
+    },
+    {
+      "assetTag": "AF-0009",
+      "name": "Lenovo ThinkCentre Neo 50t",
+      "category": "Electronics",
+      "serialNumber": "LENTC50T01",
+      "acquisitionDate": "2021-08-14",
+      "acquisitionCost": 55000,
+      "condition": "FAIR",
+      "location": "HQ Floor 3",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "HR",
+      "customFieldValues": {
+        "warranty_months": 36,
+        "ram_gb": 8
+      }
+    },
+    {
+      "assetTag": "AF-0010",
+      "name": "HP EliteBook 840 G10",
+      "category": "Electronics",
+      "serialNumber": "HPELITE840G10",
+      "acquisitionDate": "2023-08-10",
+      "acquisitionCost": 95000,
+      "condition": "GOOD",
+      "location": "HQ Floor 1",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Facilities",
+      "customFieldValues": {
+        "warranty_months": 36,
+        "ram_gb": 16
+      }
+    },
+    {
+      "assetTag": "AF-0011",
+      "name": "Herman Miller Aeron Chair",
+      "category": "Furniture",
+      "serialNumber": "HMAERON001",
+      "acquisitionDate": "2022-10-01",
+      "acquisitionCost": 120000,
+      "condition": "GOOD",
+      "location": "HQ Floor 1",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "IT",
+      "customFieldValues": {}
+    },
+    {
+      "assetTag": "AF-0012",
+      "name": "Herman Miller Aeron Chair",
+      "category": "Furniture",
+      "serialNumber": "HMAERON002",
+      "acquisitionDate": "2022-10-01",
+      "acquisitionCost": 120000,
+      "condition": "GOOD",
+      "location": "HQ Floor 2",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Operations",
+      "customFieldValues": {}
+    },
+    {
+      "assetTag": "AF-0013",
+      "name": "Herman Miller Aeron Chair",
+      "category": "Furniture",
+      "serialNumber": "HMAERON003",
+      "acquisitionDate": "2022-10-01",
+      "acquisitionCost": 120000,
+      "condition": "GOOD",
+      "location": "HQ Floor 3",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "HR",
+      "customFieldValues": {}
+    },
+    {
+      "assetTag": "AF-0014",
+      "name": "Desker Ergonomic Standing Desk",
+      "category": "Furniture",
+      "serialNumber": "DESKERST001",
+      "acquisitionDate": "2023-04-18",
+      "acquisitionCost": 45000,
+      "condition": "NEW",
+      "location": "HQ Floor 1",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "IT",
+      "customFieldValues": {}
+    },
+    {
+      "assetTag": "AF-0015",
+      "name": "Desker Ergonomic Standing Desk",
+      "category": "Furniture",
+      "serialNumber": "DESKERST002",
+      "acquisitionDate": "2023-04-18",
+      "acquisitionCost": 45000,
+      "condition": "NEW",
+      "location": "HQ Floor 2",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Operations",
+      "customFieldValues": {}
+    },
+    {
+      "assetTag": "AF-0016",
+      "name": "Executive Glass Conference Table",
+      "category": "Furniture",
+      "serialNumber": null,
+      "acquisitionDate": "2021-06-20",
+      "acquisitionCost": 80000,
+      "condition": "GOOD",
+      "location": "HQ Floor 1",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Operations",
+      "customFieldValues": {}
+    },
+    {
+      "assetTag": "AF-0017",
+      "name": "Tata Ace Cargo",
+      "category": "Vehicles",
+      "serialNumber": "TATAACE001",
+      "acquisitionDate": "2021-12-15",
+      "acquisitionCost": 650000,
+      "condition": "FAIR",
+      "location": "Warehouse",
+      "isBookable": true,
+      "status": "AVAILABLE",
+      "department": "Operations",
+      "customFieldValues": {
+        "registration_no": "MH-12-PQ-9876",
+        "insurance_expiry": "2026-12-14"
+      }
+    },
+    {
+      "assetTag": "AF-0018",
+      "name": "Toyota Innova Crysta",
+      "category": "Vehicles",
+      "serialNumber": "TOYOTAIC001",
+      "acquisitionDate": "2023-07-22",
+      "acquisitionCost": 2400000,
+      "condition": "GOOD",
+      "location": "HQ Floor 1",
+      "isBookable": true,
+      "status": "AVAILABLE",
+      "department": "Operations",
+      "customFieldValues": {
+        "registration_no": "MH-12-RS-4321",
+        "insurance_expiry": "2026-07-21"
+      }
+    },
+    {
+      "assetTag": "AF-0019",
+      "name": "Honda Activa 6G",
+      "category": "Vehicles",
+      "serialNumber": "HONDAA6G01",
+      "acquisitionDate": "2022-09-10",
+      "acquisitionCost": 90000,
+      "condition": "GOOD",
+      "location": "HQ Floor 1",
+      "isBookable": true,
+      "status": "AVAILABLE",
+      "department": "Facilities",
+      "customFieldValues": {
+        "registration_no": "MH-12-XY-1234",
+        "insurance_expiry": "2026-09-09"
+      }
+    },
+    {
+      "assetTag": "AF-0020",
+      "name": "Room A1 - Ground Floor",
+      "category": "Meeting Rooms",
+      "serialNumber": null,
+      "acquisitionDate": "2021-01-01",
+      "acquisitionCost": 0,
+      "condition": "GOOD",
+      "location": "HQ Floor 1",
+      "isBookable": true,
+      "status": "AVAILABLE",
+      "department": "Facilities",
+      "customFieldValues": {
+        "seating_capacity": 12
+      }
+    },
+    {
+      "assetTag": "AF-0021",
+      "name": "Room B2 - Executive Suite",
+      "category": "Meeting Rooms",
+      "serialNumber": null,
+      "acquisitionDate": "2021-01-01",
+      "acquisitionCost": 0,
+      "condition": "GOOD",
+      "location": "HQ Floor 2",
+      "isBookable": true,
+      "status": "AVAILABLE",
+      "department": "Facilities",
+      "customFieldValues": {
+        "seating_capacity": 6
+      }
+    },
+    {
+      "assetTag": "AF-0022",
+      "name": "Room C3 - Brainstorm Area",
+      "category": "Meeting Rooms",
+      "serialNumber": null,
+      "acquisitionDate": "2021-01-01",
+      "acquisitionCost": 0,
+      "condition": "GOOD",
+      "location": "HQ Floor 3",
+      "isBookable": true,
+      "status": "AVAILABLE",
+      "department": "Facilities",
+      "customFieldValues": {
+        "seating_capacity": 8
+      }
+    },
+    {
+      "assetTag": "AF-0023",
+      "name": "Main Boardroom",
+      "category": "Meeting Rooms",
+      "serialNumber": null,
+      "acquisitionDate": "2021-01-01",
+      "acquisitionCost": 0,
+      "condition": "GOOD",
+      "location": "HQ Floor 1",
+      "isBookable": true,
+      "status": "AVAILABLE",
+      "department": "Facilities",
+      "customFieldValues": {
+        "seating_capacity": 20
+      }
+    },
+    {
+      "assetTag": "AF-0024",
+      "name": "Epson EB-FH52 Projector",
+      "category": "AV Equipment",
+      "serialNumber": "EPSONFH5201",
+      "acquisitionDate": "2022-03-10",
+      "acquisitionCost": 75000,
+      "condition": "GOOD",
+      "location": "HQ Floor 1",
+      "isBookable": true,
+      "status": "AVAILABLE",
+      "department": "IT",
+      "customFieldValues": {}
+    },
+    {
+      "assetTag": "AF-0025",
+      "name": "Epson EB-FH52 Projector",
+      "category": "AV Equipment",
+      "serialNumber": "EPSONFH5202",
+      "acquisitionDate": "2022-03-10",
+      "acquisitionCost": 75000,
+      "condition": "GOOD",
+      "location": "HQ Floor 2",
+      "isBookable": true,
+      "status": "AVAILABLE",
+      "department": "IT",
+      "customFieldValues": {}
+    },
+    {
+      "assetTag": "AF-0026",
+      "name": "Sony Alpha 7 IV Camera",
+      "category": "AV Equipment",
+      "serialNumber": "SONYA7IV01",
+      "acquisitionDate": "2023-05-14",
+      "acquisitionCost": 240000,
+      "condition": "NEW",
+      "location": "HQ Floor 1",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Operations",
+      "customFieldValues": {}
+    },
+    {
+      "assetTag": "AF-0027",
+      "name": "Logitech MeetUp VC System",
+      "category": "AV Equipment",
+      "serialNumber": "LOGIMU01",
+      "acquisitionDate": "2022-08-22",
+      "acquisitionCost": 95000,
+      "condition": "GOOD",
+      "location": "HQ Floor 2",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Facilities",
+      "customFieldValues": {}
+    },
+    {
+      "assetTag": "AF-0028",
+      "name": "JBL EON715 Active Speaker",
+      "category": "AV Equipment",
+      "serialNumber": "JBLEON71501",
+      "acquisitionDate": "2021-11-05",
+      "acquisitionCost": 65000,
+      "condition": "GOOD",
+      "location": "HQ Floor 1",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Facilities",
+      "customFieldValues": {}
+    },
+    {
+      "assetTag": "AF-0029",
+      "name": "Kirloskar 5kVA Diesel Generator",
+      "category": "Machinery",
+      "serialNumber": "KIRGEN5KVA",
+      "acquisitionDate": "2021-05-20",
+      "acquisitionCost": 180000,
+      "condition": "GOOD",
+      "location": "Warehouse",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Facilities",
+      "customFieldValues": {
+        "last_service": "2026-01-15"
+      }
+    },
+    {
+      "assetTag": "AF-0030",
+      "name": "Godrej 1.5 Ton Forklift",
+      "category": "Machinery",
+      "serialNumber": "GODFL15T",
+      "acquisitionDate": "2022-02-18",
+      "acquisitionCost": 850000,
+      "condition": "FAIR",
+      "location": "Warehouse",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Operations",
+      "customFieldValues": {
+        "last_service": "2025-11-20"
+      }
+    },
+    {
+      "assetTag": "AF-0031",
+      "name": "Blue Star 500L Deep Freezer",
+      "category": "Machinery",
+      "serialNumber": "BSDF500L",
+      "acquisitionDate": "2023-06-30",
+      "acquisitionCost": 60000,
+      "condition": "NEW",
+      "location": "Warehouse",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Operations",
+      "customFieldValues": {}
+    },
+    {
+      "assetTag": "AF-0032",
+      "name": "Daikin VRV IV AC Outdoor Unit",
+      "category": "Machinery",
+      "serialNumber": "DAIKINVRV4",
+      "acquisitionDate": "2021-04-12",
+      "acquisitionCost": 1200000,
+      "condition": "GOOD",
+      "location": "HQ Floor 1",
+      "isBookable": false,
+      "status": "AVAILABLE",
+      "department": "Facilities",
+      "customFieldValues": {
+        "last_service": "2026-03-10"
+      }
+    }
+  ]
+}
