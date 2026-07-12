@@ -8,7 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../prisma/prisma.service';
 import { SignupDto } from './dto/signup.dto';
 import { LoginDto } from './dto/login.dto';
-import { Prisma } from '@prisma/client';
+import { Prisma, UserRole } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +28,7 @@ export class AuthService {
           role: 'EMPLOYEE', // Hardcoded per requirements
         },
       });
-      return this.generateToken(user.id);
+      return this.generateToken(user.id, user.role);
     } catch (error) {
       if (
         error instanceof Prisma.PrismaClientKnownRequestError &&
@@ -73,11 +73,11 @@ export class AuthService {
       });
     }
 
-    return this.generateToken(user.id);
+    return this.generateToken(user.id, user.role);
   }
 
-  private generateToken(userId: string) {
-    const payload = { sub: userId };
+  private generateToken(userId: string, role: UserRole) {
+    const payload = { sub: userId, role };
     return {
       access_token: this.jwtService.sign(payload),
     };

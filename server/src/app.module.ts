@@ -19,6 +19,8 @@ import { PrismaModule } from './prisma/prisma.module';
 import { TransfersModule } from './modules/transfers/transfers.module';
 import { BookingsModule } from './modules/bookings/bookings.module';
 import { MaintenanceModule } from './modules/maintenance/maintenance.module';
+import { EventsModule } from './modules/events/events.module';
+import { NotificationsModule } from './modules/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -45,6 +47,8 @@ import { MaintenanceModule } from './modules/maintenance/maintenance.module';
     TransfersModule,
     BookingsModule,
     MaintenanceModule,
+    EventsModule,
+    NotificationsModule,
   ],
   providers: [
     // Order matters: rate limit -> authenticate -> authorize.
