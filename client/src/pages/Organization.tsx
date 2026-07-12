@@ -166,7 +166,7 @@ function CategoriesTab() {
 const ROLES: Role[] = ['EMPLOYEE', 'DEPT_HEAD', 'ASSET_MANAGER'];
 
 function EmployeesTab() {
-  const { data } = useUsers({ limit: 200 });
+  const { data } = useUsers({ limit: 100 });
   const setRole = useSetUserRole();
   const setStatus = useSetUserStatus();
   const resetPassword = useResetPassword();

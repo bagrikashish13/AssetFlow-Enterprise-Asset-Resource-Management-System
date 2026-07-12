@@ -16,7 +16,7 @@ export function MaintenanceModal({ assetId, onClose }: { assetId?: string; onClo
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState<MaintenancePriority>('MEDIUM');
   const [error, setError] = useState('');
-  const { data: assets } = useAssets({ limit: 200 });
+  const { data: assets } = useAssets({ limit: 100 });
   const createMaintenance = useCreateMaintenance();
   const { toast } = useToast();
 

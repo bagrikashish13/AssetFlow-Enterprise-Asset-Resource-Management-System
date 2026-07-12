@@ -27,8 +27,8 @@ export function Bookings() {
   const filteredResources = bookableAssets.filter((a) => a.name.toLowerCase().includes(resourceQ.toLowerCase()));
   const activeAsset = bookableAssets.find((a) => a.id === selectedAssetId) ?? filteredResources[0];
 
-  const { data: bookings } = useBookings({ assetId: activeAsset?.id, limit: 200 });
-  const { data: allBookings } = useBookings({ limit: 200 });
+  const { data: bookings } = useBookings({ assetId: activeAsset?.id, limit: 100 });
+  const { data: allBookings } = useBookings({ limit: 100 });
   const cancelBooking = useCancelBooking();
 
   return (
