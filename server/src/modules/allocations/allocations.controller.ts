@@ -11,7 +11,7 @@ import {
 import { AllocationsService } from './allocations.service';
 import { CreateAllocationDto } from './dto/create-allocation.dto';
 import { ReturnAllocationDto } from './dto/return-allocation.dto';
-import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { AllocationQueryDto } from './dto/allocation-query.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { UserRole } from '@prisma/client';
@@ -48,10 +48,7 @@ export class AllocationsController {
     UserRole.DEPT_HEAD,
     UserRole.EMPLOYEE,
   )
-  findAll(
-    @Query()
-    query: PaginationQueryDto & { assetId?: string; holderUserId?: string },
-  ) {
+  findAll(@Query() query: AllocationQueryDto) {
     return this.allocationsService.findAll(query);
   }
 }

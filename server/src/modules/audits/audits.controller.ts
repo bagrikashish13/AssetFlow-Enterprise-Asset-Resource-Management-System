@@ -9,11 +9,11 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
-import { AuditCycleStatus, UserRole } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 import { AuditsService } from './audits.service';
 import { CreateAuditDto } from './dto/create-audit.dto';
 import { RecordVerdictDto } from './dto/record-verdict.dto';
-import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { AuditQueryDto } from './dto/audit-query.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '../../common/types/authenticated-request';
@@ -31,7 +31,7 @@ export class AuditsController {
 
   @Get()
   findAll(
-    @Query() query: PaginationQueryDto & { status?: AuditCycleStatus },
+    @Query() query: AuditQueryDto,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.auditsService.findAll(query, user);

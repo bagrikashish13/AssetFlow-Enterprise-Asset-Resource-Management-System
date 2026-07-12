@@ -11,10 +11,10 @@ import {
 import { TransfersService } from './transfers.service';
 import { CreateTransferDto } from './dto/create-transfer.dto';
 import { DecisionTransferDto } from './dto/decision-transfer.dto';
-import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { TransferQueryDto } from './dto/transfer-query.dto';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
-import { UserRole, TransferStatus } from '@prisma/client';
+import { UserRole } from '@prisma/client';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
 import { RolesGuard } from '../../common/guards/roles.guard';
 
@@ -72,7 +72,7 @@ export class TransfersController {
 
   @Get()
   @Roles(UserRole.ADMIN, UserRole.ASSET_MANAGER, UserRole.DEPT_HEAD)
-  findAll(@Query() query: PaginationQueryDto & { status?: TransferStatus }) {
+  findAll(@Query() query: TransferQueryDto) {
     return this.transfersService.findAll(query);
   }
 }

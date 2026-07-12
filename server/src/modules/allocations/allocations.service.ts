@@ -7,7 +7,7 @@ import {
 import { PrismaService } from '../../prisma/prisma.service';
 import { CreateAllocationDto } from './dto/create-allocation.dto';
 import { ReturnAllocationDto } from './dto/return-allocation.dto';
-import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { AllocationQueryDto } from './dto/allocation-query.dto';
 import { AssetStatus, AllocationStatus, Prisma } from '@prisma/client';
 import { AssetStateMachine } from '../assets/asset-state.machine';
 import { NotificationsService } from '../notifications/notifications.service';
@@ -178,15 +178,26 @@ export class AllocationsService {
       });
   }
 
-  async findAll(
-    query: PaginationQueryDto & { assetId?: string; holderUserId?: string },
-  ) {
-    const { page = 1, limit = 20, sort, assetId, holderUserId } = query;
+  async findAll(query: AllocationQueryDto) {
+    const {
+      page = 1,
+      limit = 20,
+      sort,
+      assetId,
+      holderUserId,
+      status,
+      overdue,
+    } = query;
     const skip = (page - 1) * limit;
 
     const where: Prisma.AllocationWhereInput = {
       ...(assetId && { assetId }),
       ...(holderUserId && { holderUserId }),
+      ...(status && { status }),
+      ...(overdue === 'true' && {
+        status: AllocationStatus.ACTIVE,
+        expectedReturnAt: { lt: new Date() },
+      }),
     };
 
     const [total, allocations] = await Promise.all([

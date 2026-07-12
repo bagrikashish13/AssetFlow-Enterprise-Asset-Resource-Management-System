@@ -8,7 +8,7 @@ import {
 } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { NotificationsService } from './notifications.service';
-import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
+import { NotificationQueryDto } from './dto/notification-query.dto';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 
 @ApiTags('notifications')
@@ -19,7 +19,7 @@ export class NotificationsController {
   @Get()
   findAll(
     @CurrentUser('id') userId: string,
-    @Query() query: PaginationQueryDto & { unread?: string },
+    @Query() query: NotificationQueryDto,
   ) {
     return this.notificationsService.findAll(userId, query);
   }
