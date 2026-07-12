@@ -160,10 +160,78 @@ async function seedAssets() {
   }
 }
 
+async function seedAllocationsAndBookings() {
+  const allocPath = path.join(__dirname, 'seed-data', 'allocations-bookings.json');
+  if (!fs.existsSync(allocPath)) {
+    console.log('Skipping allocations-bookings.json (not found).');
+    return;
+  }
+  console.log('Seeding allocations-bookings.json...');
+  const data = JSON.parse(fs.readFileSync(allocPath, 'utf8'));
+
+  const admin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
+  if (!admin) throw new Error('No ADMIN user found for allocation creation.');
+
+  if (data.allocations) {
+    for (const alloc of data.allocations) {
+      const asset = await prisma.asset.findUnique({ where: { assetTag: alloc.assetTag } });
+      if (!asset) continue;
+
+      let holderUserId = null;
+      let holderDepartmentId = null;
+
+      if (alloc.holderEmail) {
+        const user = await prisma.user.findUnique({ where: { email: alloc.holderEmail } });
+        if (user) holderUserId = user.id;
+      } else if (alloc.holderDepartment) {
+        const dept = await prisma.department.findUnique({ where: { name: alloc.holderDepartment } });
+        if (dept) holderDepartmentId = dept.id;
+      }
+
+      await prisma.allocation.create({
+        data: {
+          assetId: asset.id,
+          holderUserId,
+          holderDepartmentId,
+          allocatedById: admin.id,
+          allocatedAt: new Date(alloc.allocatedAt),
+          expectedReturnAt: alloc.expectedReturnAt ? new Date(alloc.expectedReturnAt) : null,
+          status: alloc.status || 'ACTIVE',
+          notes: alloc.notes,
+        }
+      });
+      
+      if (alloc.status === 'ACTIVE') {
+         await prisma.asset.update({ where: { id: asset.id }, data: { status: 'ALLOCATED' } });
+      }
+    }
+  }
+
+  if (data.bookings) {
+    for (const b of data.bookings) {
+      const asset = await prisma.asset.findUnique({ where: { assetTag: b.assetTag } });
+      const user = await prisma.user.findUnique({ where: { email: b.bookedByEmail } });
+      if (!asset || !user) continue;
+
+      await prisma.booking.create({
+        data: {
+          assetId: asset.id,
+          bookedById: user.id,
+          purpose: b.purpose,
+          startAt: new Date(b.startAt),
+          endAt: new Date(b.endAt),
+          status: b.status || 'CONFIRMED'
+        }
+      });
+    }
+  }
+}
+
 async function main() {
   console.log('Starting seed process...');
   await seedOrganization();
   await seedAssets();
+  await seedAllocationsAndBookings();
   console.log('Seed completed successfully!');
 }
 
