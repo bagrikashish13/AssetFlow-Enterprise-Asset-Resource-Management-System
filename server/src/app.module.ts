@@ -7,6 +7,8 @@ import { envValidationSchema } from './config/env.validation';
 import { HealthModule } from './modules/health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
+import { DepartmentsModule } from './modules/departments/departments.module';
+import { CategoriesModule } from './modules/categories/categories.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -27,6 +29,8 @@ import { PrismaModule } from './prisma/prisma.module';
     HealthModule,
     AuthModule,
     UsersModule,
+    DepartmentsModule,
+    CategoriesModule,
   ],
   providers: [
     {
