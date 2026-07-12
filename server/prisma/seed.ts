@@ -1,104 +1,84 @@
-import { PrismaClient, UserRole, AssetStatus, AssetCondition } from '../generated/prisma';
+import 'dotenv/config';
+import { PrismaClient, UserRole, AssetStatus, AssetCondition } from '@prisma/client';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as bcrypt from 'bcrypt';
+import { Pool } from 'pg';
+import { PrismaPg } from '@prisma/adapter-pg';
 
-const prisma = new PrismaClient();
+const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+const adapter = new PrismaPg(pool);
+const prisma = new PrismaClient({ adapter });
 
 async function seedOrganization() {
   const orgPath = path.join(__dirname, 'seed-data', 'organization.json');
   if (!fs.existsSync(orgPath)) {
-    console.log('Skipping organization seed: organization.json not found (P2 has not merged yet).');
+    console.log('Skipping organization.json (not found).');
     return;
   }
+  console.log('Seeding organization.json...');
+  const data = JSON.parse(fs.readFileSync(orgPath, 'utf8'));
 
-  console.log('Seeding organization data...');
-  const orgData = JSON.parse(fs.readFileSync(orgPath, 'utf-8'));
-
-  // 1. Upsert Departments
-  if (orgData.departments) {
-    for (const dept of orgData.departments) {
+  // 1. Seed base Departments (no relations)
+  if (data.departments) {
+    for (const d of data.departments) {
       await prisma.department.upsert({
-        where: { name: dept.name },
-        update: { description: dept.description },
+        where: { name: d.name },
+        update: { description: d.description },
         create: {
-          name: dept.name,
-          description: dept.description,
-        },
-      });
-    }
-
-    // Second pass for parent/child
-    for (const dept of orgData.departments) {
-      if (dept.parentName) {
-        const parent = await prisma.department.findUnique({ where: { name: dept.parentName } });
-        if (parent) {
-          await prisma.department.update({
-            where: { name: dept.name },
-            data: { parentId: parent.id },
-          });
+          name: d.name,
+          description: d.description
         }
-      }
-    }
-  }
-
-  // 2. Upsert Categories
-  if (orgData.categories) {
-    for (const cat of orgData.categories) {
-      await prisma.assetCategory.upsert({
-        where: { name: cat.name },
-        update: {
-          description: cat.description,
-          icon: cat.icon,
-          fields: cat.fields || [],
-        },
-        create: {
-          name: cat.name,
-          description: cat.description,
-          icon: cat.icon,
-          fields: cat.fields || [],
-        },
       });
     }
   }
 
-  // 3. Upsert Users
-  if (orgData.users) {
-    const passwordHash = await bcrypt.hash('password123', 10);
-    for (const user of orgData.users) {
-      let departmentId = null;
-      if (user.department) {
-        const dept = await prisma.department.findUnique({ where: { name: user.department } });
-        departmentId = dept?.id || null;
+  // 2. Seed Users (link to Department)
+  if (data.users) {
+    for (const u of data.users) {
+      let deptId = null;
+      if (u.department) {
+        const dept = await prisma.department.findUnique({ where: { name: u.department } });
+        if (dept) deptId = dept.id;
       }
-
+      
       await prisma.user.upsert({
-        where: { email: user.email },
+        where: { email: u.email },
         update: {
-          name: user.name,
-          role: user.role as UserRole,
-          departmentId,
+          name: u.name,
+          role: u.role as UserRole,
+          departmentId: deptId
         },
         create: {
-          name: user.name,
-          email: user.email,
-          passwordHash,
-          role: user.role as UserRole,
-          departmentId,
-        },
+          email: u.email,
+          name: u.name,
+          passwordHash: await bcrypt.hash('password123', 10),
+          role: u.role as UserRole,
+          departmentId: deptId
+        }
       });
     }
+  }
 
-    // Assign Department Heads
-    for (const dept of orgData.departments) {
-      if (dept.headEmail) {
-        const head = await prisma.user.findUnique({ where: { email: dept.headEmail } });
-        if (head) {
-          await prisma.department.update({
-            where: { name: dept.name },
-            data: { headId: head.id },
-          });
-        }
+  // 3. Update Departments with head and parent
+  if (data.departments) {
+    for (const d of data.departments) {
+      let parentId = null;
+      if (d.parentName) {
+        const parent = await prisma.department.findUnique({ where: { name: d.parentName } });
+        if (parent) parentId = parent.id;
+      }
+      let headId = null;
+      if (d.headEmail) {
+        const head = await prisma.user.findUnique({ where: { email: d.headEmail } });
+        if (head) headId = head.id;
+      }
+      
+      if (parentId || headId) {
+        await prisma.department.update({
+          where: { name: d.name },
+          data: { parentId, headId }
+        });
       }
     }
   }
@@ -107,81 +87,92 @@ async function seedOrganization() {
 async function seedAssets() {
   const assetsPath = path.join(__dirname, 'seed-data', 'assets.json');
   if (!fs.existsSync(assetsPath)) {
-    console.log('Skipping assets seed: assets.json not found (P3 has not merged yet).');
+    console.log('Skipping assets.json (not found).');
     return;
   }
+  console.log('Seeding assets.json...');
+  const data = JSON.parse(fs.readFileSync(assetsPath, 'utf8'));
 
-  console.log('Seeding assets data...');
-  const assetsData = JSON.parse(fs.readFileSync(assetsPath, 'utf-8'));
-
-  if (assetsData.assets) {
-    // Need an admin user to be the creator
-    const admin = await prisma.user.findFirst({ where: { role: 'ADMIN' } });
-    if (!admin) {
-      console.warn('Cannot seed assets: No ADMIN user found to set as createdBy.');
-      return;
+  if (data.assets) {
+    // 1. Extract and seed unique categories
+    const categoryNames = [...new Set(data.assets.map((a: any) => a.category))];
+    for (const catName of categoryNames) {
+      if (!catName) continue;
+      await prisma.assetCategory.upsert({
+        where: { name: String(catName) },
+        update: {},
+        create: {
+          name: String(catName),
+          description: String(catName) + ' Category',
+          icon: 'box'
+        }
+      });
     }
 
-    for (const asset of assetsData.assets) {
-      const category = await prisma.assetCategory.findUnique({ where: { name: asset.category } });
-      if (!category) {
-        console.warn(`Category not found for asset ${asset.assetTag}: ${asset.category}`);
-        continue;
+    // 2. Seed Assets
+    for (const a of data.assets) {
+      // Find Category
+      const cat = await prisma.assetCategory.findUnique({ where: { name: a.category } });
+      if (!cat) continue; // skip if category doesn't exist for some reason
+      
+      // Find Department
+      let deptId = null;
+      if (a.department) {
+        const dept = await prisma.department.findUnique({ where: { name: a.department } });
+        if (dept) deptId = dept.id;
       }
 
-      let departmentId = null;
-      if (asset.department) {
-        const dept = await prisma.department.findUnique({ where: { name: asset.department } });
-        departmentId = dept?.id || null;
-      }
+      // Find a user to be the creator
+      const firstUser = await prisma.user.findFirst();
+      if (!firstUser) throw new Error("Cannot seed assets without at least one user in DB.");
 
       await prisma.asset.upsert({
-        where: { assetTag: asset.assetTag },
+        where: { assetTag: a.assetTag },
         update: {
-          name: asset.name,
-          categoryId: category.id,
-          serialNumber: asset.serialNumber,
-          acquisitionDate: asset.acquisitionDate ? new Date(asset.acquisitionDate) : null,
-          acquisitionCost: asset.acquisitionCost,
-          condition: asset.condition as AssetCondition,
-          location: asset.location,
-          isBookable: asset.isBookable || false,
-          status: asset.status as AssetStatus,
-          departmentId,
-          customFieldValues: asset.customFieldValues || {},
+          name: a.name,
+          categoryId: cat.id,
+          status: (a.status || 'AVAILABLE') as AssetStatus,
+          condition: (a.condition || 'GOOD') as AssetCondition,
+          location: a.location || null,
+          isBookable: a.isBookable ?? true,
+          acquisitionDate: a.acquisitionDate ? new Date(a.acquisitionDate) : null,
+          acquisitionCost: a.acquisitionCost || null,
+          departmentId: deptId,
+          customFieldValues: a.customFieldValues || {}
         },
         create: {
-          assetTag: asset.assetTag,
-          name: asset.name,
-          categoryId: category.id,
-          serialNumber: asset.serialNumber,
-          acquisitionDate: asset.acquisitionDate ? new Date(asset.acquisitionDate) : null,
-          acquisitionCost: asset.acquisitionCost,
-          condition: asset.condition as AssetCondition,
-          location: asset.location,
-          isBookable: asset.isBookable || false,
-          status: asset.status as AssetStatus,
-          departmentId,
-          createdById: admin.id,
-          customFieldValues: asset.customFieldValues || {},
-        },
+          assetTag: a.assetTag,
+          name: a.name,
+          categoryId: cat.id,
+          serialNumber: a.serialNumber || null,
+          status: (a.status || 'AVAILABLE') as AssetStatus,
+          condition: (a.condition || 'GOOD') as AssetCondition,
+          location: a.location || null,
+          isBookable: a.isBookable ?? true,
+          createdById: firstUser.id,
+          acquisitionDate: a.acquisitionDate ? new Date(a.acquisitionDate) : null,
+          acquisitionCost: a.acquisitionCost || null,
+          departmentId: deptId,
+          customFieldValues: a.customFieldValues || {}
+        }
       });
     }
   }
 }
 
 async function main() {
-  console.log('Starting seed...');
+  console.log('Starting seed process...');
   await seedOrganization();
   await seedAssets();
-  console.log('Seed completed successfully.');
+  console.log('Seed completed successfully!');
 }
 
 main()
   .catch((e) => {
-    console.error(e);
+    console.error('Seed error:', e);
     process.exit(1);
   })
   .finally(async () => {
     await prisma.$disconnect();
+    await pool.end();
   });
