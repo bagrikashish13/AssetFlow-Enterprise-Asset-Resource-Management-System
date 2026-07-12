@@ -1,14 +1,20 @@
-import { IsString, IsOptional, IsUUID, IsDateString, ValidateIf } from 'class-validator';
+import {
+  IsString,
+  IsOptional,
+  IsUUID,
+  IsDateString,
+  ValidateIf,
+} from 'class-validator';
 
 export class CreateAllocationDto {
   @IsUUID()
   assetId!: string;
 
-  @ValidateIf(o => !o.holderDepartmentId)
+  @ValidateIf((o: CreateAllocationDto) => !o.holderDepartmentId)
   @IsUUID()
   holderUserId?: string;
 
-  @ValidateIf(o => !o.holderUserId)
+  @ValidateIf((o: CreateAllocationDto) => !o.holderUserId)
   @IsUUID()
   holderDepartmentId?: string;
 

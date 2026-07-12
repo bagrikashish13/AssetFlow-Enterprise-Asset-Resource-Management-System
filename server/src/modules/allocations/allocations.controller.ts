@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Query, UseGuards, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Query,
+  UseGuards,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { AllocationsService } from './allocations.service';
 import { CreateAllocationDto } from './dto/create-allocation.dto';
 import { ReturnAllocationDto } from './dto/return-allocation.dto';
@@ -16,19 +25,33 @@ export class AllocationsController {
 
   @Post()
   @Roles(UserRole.ADMIN, UserRole.ASSET_MANAGER)
-  allocate(@Body() createAllocationDto: CreateAllocationDto, @CurrentUser('id') userId: string) {
+  allocate(
+    @Body() createAllocationDto: CreateAllocationDto,
+    @CurrentUser('id') userId: string,
+  ) {
     return this.allocationsService.allocate(createAllocationDto, userId);
   }
 
   @Post(':id/return')
   @Roles(UserRole.ADMIN, UserRole.ASSET_MANAGER)
-  returnAsset(@Param('id', ParseUUIDPipe) id: string, @Body() returnAllocationDto: ReturnAllocationDto) {
+  returnAsset(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() returnAllocationDto: ReturnAllocationDto,
+  ) {
     return this.allocationsService.returnAsset(id, returnAllocationDto);
   }
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.ASSET_MANAGER, UserRole.DEPT_HEAD, UserRole.EMPLOYEE)
-  findAll(@Query() query: PaginationQueryDto & { assetId?: string, holderUserId?: string }) {
+  @Roles(
+    UserRole.ADMIN,
+    UserRole.ASSET_MANAGER,
+    UserRole.DEPT_HEAD,
+    UserRole.EMPLOYEE,
+  )
+  findAll(
+    @Query()
+    query: PaginationQueryDto & { assetId?: string; holderUserId?: string },
+  ) {
     return this.allocationsService.findAll(query);
   }
 }
