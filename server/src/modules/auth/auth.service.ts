@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException, ConflictException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../../prisma/prisma.service';
@@ -26,8 +30,14 @@ export class AuthService {
       });
       return this.generateToken(user.id);
     } catch (error) {
-      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
-        throw new ConflictException({ errorCode: 'EMAIL_TAKEN', message: 'Email is already in use' });
+      if (
+        error instanceof Prisma.PrismaClientKnownRequestError &&
+        error.code === 'P2002'
+      ) {
+        throw new ConflictException({
+          errorCode: 'EMAIL_TAKEN',
+          message: 'Email is already in use',
+        });
       }
       throw error;
     }
@@ -39,16 +49,28 @@ export class AuthService {
     });
 
     if (!user) {
-      throw new UnauthorizedException({ errorCode: 'INVALID_CREDENTIALS', message: 'Invalid credentials' });
+      throw new UnauthorizedException({
+        errorCode: 'INVALID_CREDENTIALS',
+        message: 'Invalid credentials',
+      });
     }
 
     if (user.status !== 'ACTIVE') {
-      throw new UnauthorizedException({ errorCode: 'FORBIDDEN', message: 'Account is inactive' });
+      throw new UnauthorizedException({
+        errorCode: 'FORBIDDEN',
+        message: 'Account is inactive',
+      });
     }
 
-    const isPasswordValid = await bcrypt.compare(dto.password, user.passwordHash);
+    const isPasswordValid = await bcrypt.compare(
+      dto.password,
+      user.passwordHash,
+    );
     if (!isPasswordValid) {
-      throw new UnauthorizedException({ errorCode: 'INVALID_CREDENTIALS', message: 'Invalid credentials' });
+      throw new UnauthorizedException({
+        errorCode: 'INVALID_CREDENTIALS',
+        message: 'Invalid credentials',
+      });
     }
 
     return this.generateToken(user.id);

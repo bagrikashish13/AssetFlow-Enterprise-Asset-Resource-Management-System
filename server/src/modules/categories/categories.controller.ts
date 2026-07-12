@@ -1,4 +1,15 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, ParseUUIDPipe } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+  ParseUUIDPipe,
+} from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
@@ -20,20 +31,33 @@ export class CategoriesController {
   }
 
   @Get()
-  @Roles(UserRole.ADMIN, UserRole.ASSET_MANAGER, UserRole.DEPT_HEAD, UserRole.EMPLOYEE)
+  @Roles(
+    UserRole.ADMIN,
+    UserRole.ASSET_MANAGER,
+    UserRole.DEPT_HEAD,
+    UserRole.EMPLOYEE,
+  )
   findAll(@Query() query: PaginationQueryDto) {
     return this.categoriesService.findAll(query);
   }
 
   @Get(':id')
-  @Roles(UserRole.ADMIN, UserRole.ASSET_MANAGER, UserRole.DEPT_HEAD, UserRole.EMPLOYEE)
+  @Roles(
+    UserRole.ADMIN,
+    UserRole.ASSET_MANAGER,
+    UserRole.DEPT_HEAD,
+    UserRole.EMPLOYEE,
+  )
   findOne(@Param('id', ParseUUIDPipe) id: string) {
     return this.categoriesService.findOne(id);
   }
 
   @Patch(':id')
   @Roles(UserRole.ADMIN, UserRole.ASSET_MANAGER)
-  update(@Param('id', ParseUUIDPipe) id: string, @Body() updateCategoryDto: UpdateCategoryDto) {
+  update(
+    @Param('id', ParseUUIDPipe) id: string,
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ) {
     return this.categoriesService.update(id, updateCategoryDto);
   }
 

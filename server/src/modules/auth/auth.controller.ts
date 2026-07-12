@@ -6,6 +6,7 @@ import { LoginDto } from './dto/login.dto';
 import { Public } from '../../common/decorators/public.decorator';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import { Throttle } from '@nestjs/throttler';
+import type { AuthenticatedUser } from '../../common/types/authenticated-request';
 
 @Controller('auth')
 export class AuthController {
@@ -13,7 +14,10 @@ export class AuthController {
 
   @Public()
   @Post('signup')
-  async signup(@Body() dto: SignupDto, @Res({ passthrough: true }) res: Response) {
+  async signup(
+    @Body() dto: SignupDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const { access_token } = await this.authService.signup(dto);
     this.setCookie(res, access_token);
     return { message: 'Signup successful' };
@@ -22,7 +26,10 @@ export class AuthController {
   @Public()
   @Throttle({ default: { limit: 5, ttl: 60000 } }) // 5 requests per minute
   @Post('login')
-  async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
+  async login(
+    @Body() dto: LoginDto,
+    @Res({ passthrough: true }) res: Response,
+  ) {
     const { access_token } = await this.authService.login(dto);
     this.setCookie(res, access_token);
     return { message: 'Login successful' };
@@ -35,7 +42,7 @@ export class AuthController {
   }
 
   @Get('me')
-  getMe(@CurrentUser() user: any) {
+  getMe(@CurrentUser() user: AuthenticatedUser): AuthenticatedUser {
     return user;
   }
 
