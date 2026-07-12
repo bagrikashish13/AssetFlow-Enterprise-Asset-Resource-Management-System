@@ -1,3 +1,24 @@
 CLAUDE.md
 claude.md
+DESIGN-PROMPT.md
 .agents/
+devt/
+devt.zip
+
+# dependencies & builds
+node_modules/
+dist/
+build/
+coverage/
+
+# environment & secrets
+.env
+.env.*
+!.env.example
+
+# runtime data
+uploads/
+
+# editor / OS noise
+.DS_Store
+Thumbs.db
