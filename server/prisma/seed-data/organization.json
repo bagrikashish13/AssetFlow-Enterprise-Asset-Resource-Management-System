@@ -1,0 +1,198 @@
+{
+  "departments": [
+    {
+      "name": "IT",
+      "description": "Information Technology and Systems Support",
+      "parentName": null,
+      "headEmail": "deepak.sharma@assetflow.io"
+    },
+    {
+      "name": "Operations",
+      "description": "Core business operations and logistics",
+      "parentName": null,
+      "headEmail": "priya.patel@assetflow.io"
+    },
+    {
+      "name": "HR",
+      "description": "Human Resources and Talent Acquisition",
+      "parentName": null,
+      "headEmail": "anjali.rao@assetflow.io"
+    },
+    {
+      "name": "Finance",
+      "description": "Accounts, taxation, and financial planning",
+      "parentName": null,
+      "headEmail": "amit.singh@assetflow.io"
+    },
+    {
+      "name": "Facilities",
+      "description": "Office space and physical assets management",
+      "parentName": "Operations",
+      "headEmail": "rajesh.kumar@assetflow.io"
+    }
+  ],
+  "categories": [
+    {
+      "name": "Electronics",
+      "description": "Computers, laptops, monitors and hardware",
+      "icon": "laptop",
+      "fields": [
+        {
+          "key": "warranty_months",
+          "label": "Warranty Period (Months)",
+          "type": "number",
+          "required": true
+        },
+        {
+          "key": "ram_gb",
+          "label": "RAM (GB)",
+          "type": "number",
+          "required": false
+        }
+      ]
+    },
+    {
+      "name": "Furniture",
+      "description": "Office desks, chairs, and tables",
+      "icon": "armchair",
+      "fields": []
+    },
+    {
+      "name": "Vehicles",
+      "description": "Company owned delivery vans, cars and bikes",
+      "icon": "car",
+      "fields": [
+        {
+          "key": "registration_no",
+          "label": "Registration Number",
+          "type": "text",
+          "required": true
+        },
+        {
+          "key": "insurance_expiry",
+          "label": "Insurance Expiry Date",
+          "type": "date",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "Meeting Rooms",
+      "description": "Conference halls and booking rooms",
+      "icon": "door-closed",
+      "fields": [
+        {
+          "key": "seating_capacity",
+          "label": "Seating Capacity",
+          "type": "number",
+          "required": true
+        }
+      ]
+    },
+    {
+      "name": "AV Equipment",
+      "description": "Projectors, microphones, and cameras",
+      "icon": "projector",
+      "fields": []
+    },
+    {
+      "name": "Machinery",
+      "description": "Warehouse generators, heavy tooling",
+      "icon": "wrench",
+      "fields": [
+        {
+          "key": "last_service",
+          "label": "Last Service Date",
+          "type": "date",
+          "required": false
+        }
+      ]
+    }
+  ],
+  "users": [
+    {
+      "name": "System Admin",
+      "email": "admin@assetflow.io",
+      "role": "ADMIN",
+      "department": null
+    },
+    {
+      "name": "Kashish Bagri",
+      "email": "kashish.bagri@assetflow.io",
+      "role": "ASSET_MANAGER",
+      "department": "Operations"
+    },
+    {
+      "name": "Vikram Malhotra",
+      "email": "vikram.malhotra@assetflow.io",
+      "role": "ASSET_MANAGER",
+      "department": "IT"
+    },
+    {
+      "name": "Deepak Sharma",
+      "email": "deepak.sharma@assetflow.io",
+      "role": "DEPT_HEAD",
+      "department": "IT"
+    },
+    {
+      "name": "Priya Patel",
+      "email": "priya.patel@assetflow.io",
+      "role": "DEPT_HEAD",
+      "department": "Operations"
+    },
+    {
+      "name": "Anjali Rao",
+      "email": "anjali.rao@assetflow.io",
+      "role": "DEPT_HEAD",
+      "department": "HR"
+    },
+    {
+      "name": "Amit Singh",
+      "email": "amit.singh@assetflow.io",
+      "role": "EMPLOYEE",
+      "department": "Finance"
+    },
+    {
+      "name": "Rajesh Kumar",
+      "email": "rajesh.kumar@assetflow.io",
+      "role": "EMPLOYEE",
+      "department": "Facilities"
+    },
+    {
+      "name": "Sunita Sharma",
+      "email": "sunita.sharma@assetflow.io",
+      "role": "EMPLOYEE",
+      "department": "HR"
+    },
+    {
+      "name": "Arjun Verma",
+      "email": "arjun.verma@assetflow.io",
+      "role": "EMPLOYEE",
+      "department": "IT"
+    },
+    {
+      "name": "Rohan Gupta",
+      "email": "rohan.gupta@assetflow.io",
+      "role": "EMPLOYEE",
+      "department": "Operations"
+    },
+    {
+      "name": "Neha Deshmukh",
+      "email": "neha.deshmukh@assetflow.io",
+      "role": "EMPLOYEE",
+      "department": "Finance"
+    },
+    {
+      "name": "Karan Singh",
+      "email": "karan.singh@assetflow.io",
+      "role": "EMPLOYEE",
+      "department": "Facilities"
+    },
+    {
+      "name": "Rahul Nair",
+      "email": "rahul.nair@assetflow.io",
+      "role": "EMPLOYEE",
+      "department": null
+    }
+  ]
+}
