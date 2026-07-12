@@ -1,0 +1,314 @@
+{
+  "allocations": [
+    {
+      "assetTag": "AF-0001",
+      "holderEmail": "amit.singh@assetflow.io",
+      "holderDepartment": null,
+      "allocatedAt": "2026-05-10T10:00:00+05:30",
+      "expectedReturnAt": "2026-07-04T18:00:00+05:30",
+      "status": "ACTIVE",
+      "notes": "Developer workstation"
+    },
+    {
+      "assetTag": "AF-0002",
+      "holderEmail": null,
+      "holderDepartment": "IT",
+      "allocatedAt": "2026-05-12T10:00:00+05:30",
+      "expectedReturnAt": "2026-07-07T18:00:00+05:30",
+      "status": "ACTIVE",
+      "notes": "Testing server rig"
+    },
+    {
+      "assetTag": "AF-0003",
+      "holderEmail": "arjun.verma@assetflow.io",
+      "holderDepartment": null,
+      "allocatedAt": "2026-06-01T10:00:00+05:30",
+      "expectedReturnAt": "2026-07-09T18:00:00+05:30",
+      "status": "ACTIVE",
+      "notes": "Remote testing laptop"
+    },
+    {
+      "assetTag": "AF-0004",
+      "holderEmail": "sunita.sharma@assetflow.io",
+      "holderDepartment": null,
+      "allocatedAt": "2026-06-15T10:00:00+05:30",
+      "expectedReturnAt": "2026-08-15T18:00:00+05:30",
+      "status": "ACTIVE",
+      "notes": "HR induction laptop"
+    },
+    {
+      "assetTag": "AF-0005",
+      "holderEmail": null,
+      "holderDepartment": "Operations",
+      "allocatedAt": "2026-06-20T10:00:00+05:30",
+      "expectedReturnAt": "2026-08-30T18:00:00+05:30",
+      "status": "ACTIVE",
+      "notes": "Warehouse inventory monitor"
+    },
+    {
+      "assetTag": "AF-0006",
+      "holderEmail": "rohan.gupta@assetflow.io",
+      "holderDepartment": null,
+      "allocatedAt": "2026-07-01T10:00:00+05:30",
+      "expectedReturnAt": "2026-09-10T18:00:00+05:30",
+      "status": "ACTIVE",
+      "notes": "Marketing design monitor"
+    },
+    {
+      "assetTag": "AF-0007",
+      "holderEmail": null,
+      "holderDepartment": "HR",
+      "allocatedAt": "2026-07-02T10:00:00+05:30",
+      "expectedReturnAt": "2026-09-20T18:00:00+05:30",
+      "status": "ACTIVE",
+      "notes": "HR training iPad"
+    },
+    {
+      "assetTag": "AF-0008",
+      "holderEmail": "kashish.bagri@assetflow.io",
+      "holderDepartment": null,
+      "allocatedAt": "2026-07-05T10:00:00+05:30",
+      "expectedReturnAt": null,
+      "status": "ACTIVE",
+      "notes": "Asset Manager standard phone"
+    },
+    {
+      "assetTag": "AF-0009",
+      "holderEmail": null,
+      "holderDepartment": "Finance",
+      "allocatedAt": "2026-07-05T10:00:00+05:30",
+      "expectedReturnAt": null,
+      "status": "ACTIVE",
+      "notes": "Finance PC unit"
+    },
+    {
+      "assetTag": "AF-0010",
+      "holderEmail": "neha.deshmukh@assetflow.io",
+      "holderDepartment": null,
+      "allocatedAt": "2026-07-06T10:00:00+05:30",
+      "expectedReturnAt": null,
+      "status": "ACTIVE",
+      "notes": "Finance audit laptop"
+    },
+    {
+      "assetTag": "AF-0011",
+      "holderEmail": "rajesh.kumar@assetflow.io",
+      "holderDepartment": null,
+      "allocatedAt": "2026-07-08T10:00:00+05:30",
+      "expectedReturnAt": null,
+      "status": "ACTIVE",
+      "notes": "Facilities manager Aeron chair"
+    },
+    {
+      "assetTag": "AF-0012",
+      "holderEmail": null,
+      "holderDepartment": "Facilities",
+      "allocatedAt": "2026-07-08T10:00:00+05:30",
+      "expectedReturnAt": null,
+      "status": "ACTIVE",
+      "notes": "Facilities department lobby chair"
+    }
+  ],
+  "bookings": [
+    {
+      "assetTag": "AF-0021",
+      "bookedByEmail": "arjun.verma@assetflow.io",
+      "purpose": "IT Sync",
+      "startAt": "2026-07-13T09:00:00+05:30",
+      "endAt": "2026-07-13T10:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0021",
+      "bookedByEmail": "kashish.bagri@assetflow.io",
+      "purpose": "Operations Alignment",
+      "startAt": "2026-07-13T10:00:00+05:30",
+      "endAt": "2026-07-13T11:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0021",
+      "bookedByEmail": "priya.patel@assetflow.io",
+      "purpose": "Department Review",
+      "startAt": "2026-07-13T14:00:00+05:30",
+      "endAt": "2026-07-13T16:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0020",
+      "bookedByEmail": "anjali.rao@assetflow.io",
+      "purpose": "HR Interviews",
+      "startAt": "2026-07-13T11:00:00+05:30",
+      "endAt": "2026-07-13T12:30:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0017",
+      "bookedByEmail": "rohan.gupta@assetflow.io",
+      "purpose": "Delivery to Warehouse",
+      "startAt": "2026-07-13T08:30:00+05:30",
+      "endAt": "2026-07-13T11:30:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0018",
+      "bookedByEmail": "deepak.sharma@assetflow.io",
+      "purpose": "Client Visit",
+      "startAt": "2026-07-13T10:00:00+05:30",
+      "endAt": "2026-07-13T13:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0019",
+      "bookedByEmail": "rajesh.kumar@assetflow.io",
+      "purpose": "Local errands",
+      "startAt": "2026-07-13T15:00:00+05:30",
+      "endAt": "2026-07-13T16:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0022",
+      "bookedByEmail": "sunita.sharma@assetflow.io",
+      "purpose": "Brainstorming Session",
+      "startAt": "2026-07-13T16:00:00+05:30",
+      "endAt": "2026-07-13T17:30:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0023",
+      "bookedByEmail": "admin@assetflow.io",
+      "purpose": "Quarterly Board Meeting",
+      "startAt": "2026-07-14T10:00:00+05:30",
+      "endAt": "2026-07-14T12:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0024",
+      "bookedByEmail": "admin@assetflow.io",
+      "purpose": "Board Meeting Presentation",
+      "startAt": "2026-07-14T10:00:00+05:30",
+      "endAt": "2026-07-14T12:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0025",
+      "bookedByEmail": "arjun.verma@assetflow.io",
+      "purpose": "Tech Demo",
+      "startAt": "2026-07-14T14:30:00+05:30",
+      "endAt": "2026-07-14T16:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0021",
+      "bookedByEmail": "neha.deshmukh@assetflow.io",
+      "purpose": "Finance Sync",
+      "startAt": "2026-07-14T11:00:00+05:30",
+      "endAt": "2026-07-14T12:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0020",
+      "bookedByEmail": "anjali.rao@assetflow.io",
+      "purpose": "HR Interviews Round 2",
+      "startAt": "2026-07-14T15:00:00+05:30",
+      "endAt": "2026-07-14T16:30:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0017",
+      "bookedByEmail": "rohan.gupta@assetflow.io",
+      "purpose": "Office supply transport",
+      "startAt": "2026-07-14T09:00:00+05:30",
+      "endAt": "2026-07-14T11:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0018",
+      "bookedByEmail": "priya.patel@assetflow.io",
+      "purpose": "Vendor Meetup",
+      "startAt": "2026-07-14T13:00:00+05:30",
+      "endAt": "2026-07-14T15:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0019",
+      "bookedByEmail": "karan.singh@assetflow.io",
+      "purpose": "Post office run",
+      "startAt": "2026-07-14T10:00:00+05:30",
+      "endAt": "2026-07-14T11:30:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0021",
+      "bookedByEmail": "deepak.sharma@assetflow.io",
+      "purpose": "Last Week Sprint Planning",
+      "startAt": "2026-07-08T10:00:00+05:30",
+      "endAt": "2026-07-08T11:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0020",
+      "bookedByEmail": "anjali.rao@assetflow.io",
+      "purpose": "HR Review",
+      "startAt": "2026-07-09T14:00:00+05:30",
+      "endAt": "2026-07-09T15:30:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0018",
+      "bookedByEmail": "priya.patel@assetflow.io",
+      "purpose": "Airport Pickup",
+      "startAt": "2026-07-10T09:00:00+05:30",
+      "endAt": "2026-07-10T12:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0021",
+      "bookedByEmail": "admin@assetflow.io",
+      "purpose": "Weekend Server Maintenance Sync",
+      "startAt": "2026-07-12T15:00:00+05:30",
+      "endAt": "2026-07-12T16:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0024",
+      "bookedByEmail": "admin@assetflow.io",
+      "purpose": "Server Review Video",
+      "startAt": "2026-07-12T15:00:00+05:30",
+      "endAt": "2026-07-12T16:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0021",
+      "bookedByEmail": "deepak.sharma@assetflow.io",
+      "purpose": "Next Week Sync",
+      "startAt": "2026-07-20T10:00:00+05:30",
+      "endAt": "2026-07-20T11:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0020",
+      "bookedByEmail": "anjali.rao@assetflow.io",
+      "purpose": "Monthly HR meeting",
+      "startAt": "2026-07-21T11:00:00+05:30",
+      "endAt": "2026-07-21T12:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0017",
+      "bookedByEmail": "rohan.gupta@assetflow.io",
+      "purpose": "Asset relocation to site B",
+      "startAt": "2026-07-22T08:00:00+05:30",
+      "endAt": "2026-07-22T10:00:00+05:30",
+      "status": "CONFIRMED"
+    },
+    {
+      "assetTag": "AF-0023",
+      "bookedByEmail": "priya.patel@assetflow.io",
+      "purpose": "Operations Strategy workshop",
+      "startAt": "2026-07-23T14:00:00+05:30",
+      "endAt": "2026-07-23T17:00:00+05:30",
+      "status": "CONFIRMED"
+    }
+  ]
+}
