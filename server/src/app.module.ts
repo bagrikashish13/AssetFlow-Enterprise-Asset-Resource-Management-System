@@ -9,6 +9,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
 import { DepartmentsModule } from './modules/departments/departments.module';
 import { CategoriesModule } from './modules/categories/categories.module';
+import { AssetsModule } from './modules/assets/assets.module';
+import { AllocationsModule } from './modules/allocations/allocations.module';
 import { PrismaModule } from './prisma/prisma.module';
 
 @Module({
@@ -31,6 +33,8 @@ import { PrismaModule } from './prisma/prisma.module';
     UsersModule,
     DepartmentsModule,
     CategoriesModule,
+    AssetsModule,
+    AllocationsModule,
   ],
   providers: [
     {
