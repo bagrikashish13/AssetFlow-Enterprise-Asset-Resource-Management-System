@@ -13,8 +13,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ) {
     super({
       jwtFromRequest: ExtractJwt.fromExtractors([
-        (request: Request) => {
-          return request?.cookies?.af_token;
+        (request: Request): string | null => {
+          const cookies = request.cookies as Record<string, string> | undefined;
+          return cookies?.af_token ?? null;
         },
       ]),
       ignoreExpiration: false,
@@ -25,16 +26,22 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   async validate(payload: { sub: string }) {
     const user = await this.prisma.user.findUnique({
       where: { id: payload.sub },
-      include: { department: true }
+      include: { department: true },
     });
     if (!user) {
-      throw new UnauthorizedException({ errorCode: 'UNAUTHENTICATED', message: 'User not found' });
+      throw new UnauthorizedException({
+        errorCode: 'UNAUTHENTICATED',
+        message: 'User not found',
+      });
     }
     if (user.status !== 'ACTIVE') {
-      throw new UnauthorizedException({ errorCode: 'UNAUTHENTICATED', message: 'User account is inactive' });
+      throw new UnauthorizedException({
+        errorCode: 'UNAUTHENTICATED',
+        message: 'User account is inactive',
+      });
     }
     // Remove passwordHash before attaching to request
-    const { passwordHash, ...safeUser } = user;
+    const { passwordHash: _passwordHash, ...safeUser } = user;
     return safeUser;
   }
 }
