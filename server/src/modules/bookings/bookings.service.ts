@@ -11,6 +11,7 @@ import { CreateBookingDto } from './dto/create-booking.dto';
 import { RescheduleBookingDto } from './dto/reschedule-booking.dto';
 import { BookingQueryDto, AvailabilityQueryDto } from './dto/booking-query.dto';
 import { suggestSlots, Slot } from './slot-suggester';
+import { DomainEventsService } from '../events/domain-events.service';
 
 const MAX_DURATION_MS = 12 * 60 * 60 * 1000; // 12 hours
 const DEFAULT_DURATION_MIN = 60;
@@ -19,7 +20,10 @@ type BookingPhase = 'UPCOMING' | 'ONGOING' | 'COMPLETED' | 'CANCELLED';
 
 @Injectable()
 export class BookingsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly events: DomainEventsService,
+  ) {}
 
   /** Derive the read-time phase; never stored. See docs/03 §7.3. */
   private phase(booking: {
@@ -81,6 +85,8 @@ export class BookingsService {
           endAt: end,
         },
       });
+      this.events.bookingChanged(dto.assetId, booking.id);
+      this.events.invalidate(['dashboard', 'bookings']);
       return this.withPhase(booking);
     } catch (error) {
       // Race backstop: the exclusion constraint may reject a concurrent insert.
@@ -148,6 +154,8 @@ export class BookingsService {
       where: { id },
       data: { status: BookingStatus.CANCELLED, cancelledAt: new Date() },
     });
+    this.events.bookingChanged(updated.assetId, updated.id);
+    this.events.invalidate(['dashboard', 'bookings']);
     return this.withPhase(updated);
   }
 

@@ -8,10 +8,14 @@ import {
   Prisma,
   MaintenanceStatus,
   AllocationStatus,
+  AssetStatus,
   UserRole,
 } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
 import { AssetStateMachine } from '../assets/asset-state.machine';
+import { NotificationsService } from '../notifications/notifications.service';
+import { DomainEventsService } from '../events/domain-events.service';
+import { NOTIFICATION_TEMPLATES } from '../../common/constants/notification-templates';
 import { CreateMaintenanceDto } from './dto/create-maintenance.dto';
 import {
   RejectMaintenanceDto,
@@ -25,7 +29,39 @@ export class MaintenanceService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly stateMachine: AssetStateMachine,
+    private readonly notifications: NotificationsService,
+    private readonly events: DomainEventsService,
   ) {}
+
+  /** Notify the raiser about a decision and hint clients to refetch. */
+  private async announce(
+    req: { id: string; assetId: string; raisedById: string; title: string },
+    type: 'MAINTENANCE_APPROVED' | 'MAINTENANCE_REJECTED',
+    status: string,
+    extra?: Record<string, string>,
+  ): Promise<void> {
+    const asset = await this.prisma.asset.findUnique({
+      where: { id: req.assetId },
+      select: { name: true, assetTag: true },
+    });
+    const tpl = NOTIFICATION_TEMPLATES[type];
+    const params = {
+      assetName: asset?.name ?? 'Asset',
+      assetTag: asset?.assetTag ?? '',
+      ...extra,
+    };
+    await this.notifications.create({
+      userId: req.raisedById,
+      type,
+      title: tpl.title(params),
+      body: tpl.body(params),
+      entityType: 'maintenance',
+      entityId: req.id,
+    });
+    this.events.maintenanceUpdated(req.id, status, req.assetId);
+    this.events.assetUpdated(req.assetId, status);
+    this.events.invalidate(['dashboard', 'maintenance', 'assets']);
+  }
 
   async raise(dto: CreateMaintenanceDto, user: { id: string; role: UserRole }) {
     const asset = await this.prisma.asset.findUnique({
@@ -75,7 +111,7 @@ export class MaintenanceService {
     const req = await this.load(id);
     this.assertStatus(req.status, MaintenanceStatus.PENDING);
 
-    return this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       const updated = await tx.maintenanceRequest.update({
         where: { id },
         data: {
@@ -87,12 +123,14 @@ export class MaintenanceService {
       await this.stateMachine.transition(req.assetId, 'UNDER_MAINTENANCE', tx);
       return updated;
     });
+    await this.announce(req, 'MAINTENANCE_APPROVED', 'UNDER_MAINTENANCE');
+    return result;
   }
 
   async reject(id: string, dto: RejectMaintenanceDto, deciderId: string) {
     const req = await this.load(id);
     this.assertStatus(req.status, MaintenanceStatus.PENDING);
-    return this.prisma.maintenanceRequest.update({
+    const result = await this.prisma.maintenanceRequest.update({
       where: { id },
       data: {
         status: MaintenanceStatus.REJECTED,
@@ -101,6 +139,10 @@ export class MaintenanceService {
         rejectionReason: dto.rejectionReason,
       },
     });
+    await this.announce(req, 'MAINTENANCE_REJECTED', req.status, {
+      reason: dto.rejectionReason,
+    });
+    return result;
   }
 
   async assign(id: string, dto: AssignMaintenanceDto) {
@@ -129,7 +171,7 @@ export class MaintenanceService {
     const req = await this.load(id);
     this.assertStatus(req.status, MaintenanceStatus.IN_PROGRESS);
 
-    return this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       const updated = await tx.maintenanceRequest.update({
         where: { id },
         data: {
@@ -144,13 +186,16 @@ export class MaintenanceService {
         where: { assetId: req.assetId, status: AllocationStatus.ACTIVE },
         select: { id: true },
       });
-      await this.stateMachine.transition(
-        req.assetId,
-        activeAllocation ? 'ALLOCATED' : 'AVAILABLE',
-        tx,
-      );
-      return updated;
+      const nextStatus: AssetStatus = activeAllocation
+        ? AssetStatus.ALLOCATED
+        : AssetStatus.AVAILABLE;
+      await this.stateMachine.transition(req.assetId, nextStatus, tx);
+      return { updated, nextStatus };
     });
+    this.events.maintenanceUpdated(id, 'RESOLVED', req.assetId);
+    this.events.assetUpdated(req.assetId, result.nextStatus);
+    this.events.invalidate(['dashboard', 'maintenance', 'assets']);
+    return result.updated;
   }
 
   async findAll(query: MaintenanceQueryDto) {

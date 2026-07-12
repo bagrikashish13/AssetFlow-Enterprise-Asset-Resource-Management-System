@@ -9,10 +9,17 @@ import { CreateTransferDto } from './dto/create-transfer.dto';
 import { DecisionTransferDto } from './dto/decision-transfer.dto';
 import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
 import { TransferStatus, AllocationStatus, Prisma } from '@prisma/client';
+import { NotificationsService } from '../notifications/notifications.service';
+import { DomainEventsService } from '../events/domain-events.service';
+import { NOTIFICATION_TEMPLATES } from '../../common/constants/notification-templates';
 
 @Injectable()
 export class TransfersService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly notifications: NotificationsService,
+    private readonly events: DomainEventsService,
+  ) {}
 
   async create(dto: CreateTransferDto, requesterId: string) {
     if (!dto.targetUserId && !dto.targetDepartmentId) {
@@ -61,7 +68,7 @@ export class TransfersService {
   }
 
   async approve(id: string, approverId: string) {
-    return this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       const transfer = await tx.transferRequest.findUnique({ where: { id } });
       if (!transfer)
         throw new NotFoundException({
@@ -107,6 +114,30 @@ export class TransfersService {
         },
       });
     });
+
+    // After commit: notify the new holder and hint clients.
+    const approved = await this.prisma.transferRequest.findUnique({
+      where: { id },
+      include: { asset: { select: { name: true, assetTag: true } } },
+    });
+    if (approved?.targetUserId && approved.asset) {
+      const tpl = NOTIFICATION_TEMPLATES.TRANSFER_APPROVED;
+      const params = {
+        assetName: approved.asset.name,
+        assetTag: approved.asset.assetTag,
+      };
+      await this.notifications.create({
+        userId: approved.targetUserId,
+        type: 'TRANSFER_APPROVED',
+        title: tpl.title(params),
+        body: tpl.body(params),
+        entityType: 'transfer',
+        entityId: id,
+      });
+    }
+    this.events.transferUpdated(id, 'APPROVED');
+    this.events.invalidate(['dashboard', 'transfers', 'allocations', 'assets']);
+    return result;
   }
 
   async reject(id: string, dto: DecisionTransferDto, approverId: string) {
