@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { APP_GUARD } from '@nestjs/core';
+import { APP_FILTER, APP_GUARD, APP_INTERCEPTOR } from '@nestjs/core';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { envValidationSchema } from './config/env.validation';
+import { JwtAuthGuard } from './common/guards/jwt-auth.guard';
+import { RolesGuard } from './common/guards/roles.guard';
+import { GlobalExceptionFilter } from './common/filters/global-exception.filter';
+import { ActivityLogInterceptor } from './common/interceptors/activity-log.interceptor';
 import { HealthModule } from './modules/health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
@@ -39,10 +43,14 @@ import { TransfersModule } from './modules/transfers/transfers.module';
     TransfersModule,
   ],
   providers: [
-    {
-      provide: APP_GUARD,
-      useClass: ThrottlerGuard,
-    },
+    // Order matters: rate limit -> authenticate -> authorize.
+    { provide: APP_GUARD, useClass: ThrottlerGuard },
+    { provide: APP_GUARD, useClass: JwtAuthGuard },
+    { provide: APP_GUARD, useClass: RolesGuard },
+    // Uniform error envelope for every response.
+    { provide: APP_FILTER, useClass: GlobalExceptionFilter },
+    // Append-only audit trail on every mutation.
+    { provide: APP_INTERCEPTOR, useClass: ActivityLogInterceptor },
   ],
 })
 export class AppModule {}
