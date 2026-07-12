@@ -177,6 +177,15 @@ async function seedAllocationsAndBookings() {
       const asset = await prisma.asset.findUnique({ where: { assetTag: alloc.assetTag } });
       if (!asset) continue;
 
+      // Idempotency: one ACTIVE allocation per asset is enforced by a partial
+      // unique index; skip if this asset already holds an active allocation.
+      if ((alloc.status || 'ACTIVE') === 'ACTIVE') {
+        const existing = await prisma.allocation.findFirst({
+          where: { assetId: asset.id, status: 'ACTIVE' },
+        });
+        if (existing) continue;
+      }
+
       let holderUserId = null;
       let holderDepartmentId = null;
 
@@ -213,6 +222,12 @@ async function seedAllocationsAndBookings() {
       const user = await prisma.user.findUnique({ where: { email: b.bookedByEmail } });
       if (!asset || !user) continue;
 
+      // Idempotency: skip if an identical booking window already exists.
+      const existingBooking = await prisma.booking.findFirst({
+        where: { assetId: asset.id, startAt: new Date(b.startAt) },
+      });
+      if (existingBooking) continue;
+
       await prisma.booking.create({
         data: {
           assetId: asset.id,
@@ -227,11 +242,78 @@ async function seedAllocationsAndBookings() {
   }
 }
 
+async function seedMaintenance() {
+  const maintPath = path.join(__dirname, 'seed-data', 'maintenance.json');
+  if (!fs.existsSync(maintPath)) {
+    console.log('Skipping maintenance.json (not found).');
+    return;
+  }
+  console.log('Seeding maintenance.json...');
+  const data = JSON.parse(fs.readFileSync(maintPath, 'utf8'));
+
+  const decider = await prisma.user.findFirst({
+    where: { role: 'ASSET_MANAGER' },
+  });
+
+  if (data.maintenanceRequests) {
+    for (const m of data.maintenanceRequests) {
+      const asset = await prisma.asset.findUnique({
+        where: { assetTag: m.assetTag },
+      });
+      const raiser = await prisma.user.findUnique({
+        where: { email: m.raisedByEmail },
+      });
+      if (!asset || !raiser) continue;
+
+      // Idempotency: skip if this asset already has a request with this title.
+      const existing = await prisma.maintenanceRequest.findFirst({
+        where: { assetId: asset.id, title: m.title },
+      });
+      if (existing) continue;
+
+      // Populate decision/execution fields consistent with the status.
+      const decided = ['APPROVED', 'REJECTED', 'ASSIGNED', 'IN_PROGRESS', 'RESOLVED'].includes(m.status);
+      const started = ['IN_PROGRESS', 'RESOLVED'].includes(m.status);
+      const created = m.createdAt ? new Date(m.createdAt) : new Date();
+
+      await prisma.maintenanceRequest.create({
+        data: {
+          assetId: asset.id,
+          raisedById: raiser.id,
+          title: m.title,
+          description: m.description ?? null,
+          priority: m.priority || 'MEDIUM',
+          status: m.status || 'PENDING',
+          decidedById: decided && decider ? decider.id : null,
+          decidedAt: decided ? created : null,
+          rejectionReason: m.rejectionReason ?? null,
+          technicianName: m.technicianName ?? null,
+          assignedAt: m.technicianName ? created : null,
+          startedAt: started ? created : null,
+          resolvedAt: m.status === 'RESOLVED' ? created : null,
+          resolutionNotes: m.resolutionNotes ?? null,
+          cost: m.cost ?? null,
+          createdAt: created,
+        },
+      });
+
+      // Keep asset status consistent with an approved-but-unresolved request.
+      if (m.status === 'APPROVED' || m.status === 'ASSIGNED' || m.status === 'IN_PROGRESS') {
+        await prisma.asset.update({
+          where: { id: asset.id },
+          data: { status: 'UNDER_MAINTENANCE' },
+        });
+      }
+    }
+  }
+}
+
 async function main() {
   console.log('Starting seed process...');
   await seedOrganization();
   await seedAssets();
   await seedAllocationsAndBookings();
+  await seedMaintenance();
   console.log('Seed completed successfully!');
 }
 
