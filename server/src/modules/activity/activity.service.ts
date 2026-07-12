@@ -1,21 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma, UserRole } from '@prisma/client';
 import { PrismaService } from '../../prisma/prisma.service';
-import { PaginationQueryDto } from '../../common/dto/pagination-query.dto';
-
-export interface ActivityQuery extends PaginationQueryDto {
-  actorId?: string;
-  entityType?: string;
-  action?: string;
-  from?: string;
-  to?: string;
-}
+import { ActivityQueryDto } from './dto/activity-query.dto';
 
 @Injectable()
 export class ActivityService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async findAll(query: ActivityQuery, user: { id: string; role: UserRole }) {
+  async findAll(query: ActivityQueryDto, user: { id: string; role: UserRole }) {
     const {
       page = 1,
       limit = 20,

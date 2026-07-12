@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { ApiTags } from '@nestjs/swagger';
 import { ActivityService } from './activity.service';
-import type { ActivityQuery } from './activity.service';
+import { ActivityQueryDto } from './dto/activity-query.dto';
 import { CurrentUser } from '../../common/decorators/current-user.decorator';
 import type { AuthenticatedUser } from '../../common/types/authenticated-request';
 
@@ -12,7 +12,7 @@ export class ActivityController {
 
   @Get()
   findAll(
-    @Query() query: ActivityQuery,
+    @Query() query: ActivityQueryDto,
     @CurrentUser() user: AuthenticatedUser,
   ) {
     return this.activityService.findAll(query, user);
