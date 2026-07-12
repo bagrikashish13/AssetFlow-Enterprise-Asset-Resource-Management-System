@@ -17,6 +17,8 @@ import { AssetsModule } from './modules/assets/assets.module';
 import { AllocationsModule } from './modules/allocations/allocations.module';
 import { PrismaModule } from './prisma/prisma.module';
 import { TransfersModule } from './modules/transfers/transfers.module';
+import { BookingsModule } from './modules/bookings/bookings.module';
+import { MaintenanceModule } from './modules/maintenance/maintenance.module';
 
 @Module({
   imports: [
@@ -41,6 +43,8 @@ import { TransfersModule } from './modules/transfers/transfers.module';
     AssetsModule,
     AllocationsModule,
     TransfersModule,
+    BookingsModule,
+    MaintenanceModule,
   ],
   providers: [
     // Order matters: rate limit -> authenticate -> authorize.
