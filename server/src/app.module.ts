@@ -22,6 +22,8 @@ import { MaintenanceModule } from './modules/maintenance/maintenance.module';
 import { EventsModule } from './modules/events/events.module';
 import { NotificationsModule } from './modules/notifications/notifications.module';
 import { AuditsModule } from './modules/audits/audits.module';
+import { ActivityModule } from './modules/activity/activity.module';
+import { SchedulerModule } from './modules/scheduler/scheduler.module';
 
 @Module({
   imports: [
@@ -51,6 +53,8 @@ import { AuditsModule } from './modules/audits/audits.module';
     EventsModule,
     NotificationsModule,
     AuditsModule,
+    ActivityModule,
+    SchedulerModule,
   ],
   providers: [
     // Order matters: rate limit -> authenticate -> authorize.
