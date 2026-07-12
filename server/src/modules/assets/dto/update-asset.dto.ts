@@ -1,5 +1,15 @@
-import { IsString, IsOptional, IsEnum, IsUUID, IsNumber, Min, IsBoolean, IsDateString, IsObject } from 'class-validator';
-import { AssetCondition, AssetStatus } from '@prisma/client';
+import {
+  IsString,
+  IsOptional,
+  IsEnum,
+  IsUUID,
+  IsNumber,
+  Min,
+  IsBoolean,
+  IsDateString,
+  IsObject,
+} from 'class-validator';
+import { AssetCondition } from '@prisma/client';
 
 export class UpdateAssetDto {
   @IsOptional()
@@ -37,15 +47,14 @@ export class UpdateAssetDto {
 
   @IsOptional()
   @IsObject()
-  customFieldValues?: Record<string, any>;
+  customFieldValues?: Record<string, string | number>;
 
   @IsOptional()
   @IsBoolean()
   isBookable?: boolean;
 
-  @IsOptional()
-  @IsEnum(AssetStatus)
-  status?: AssetStatus;
+  // Asset status is intentionally NOT writable here — all status transitions
+  // go through the state-machine endpoints (see docs/04-LLD.md §2.5).
 
   @IsOptional()
   @IsUUID()
